@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "camera_calibration"
+version = "0.1.0"
+authors = [
+    {name = "Arthur Lovekin", email = "arthurlovekin@gmail.com"},
+]
+description = "A concise package for intrinsic and extrinsic camera calibration"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy>=1.17.0",
+    "opencv-python>=4.5.4",
+]
+
+[project.optional-dependencies]
+ros = ["rclpy", "sensor_msgs", "cv_bridge", "message_filters"]
+
+[project.scripts]
+cameracalibrator = "camera_calibration.nodes.cameracalibrator:main"
+cameracheck = "camera_calibration.nodes.cameracheck:main"
+tarfile_calibration = "camera_calibration.nodes.tarfile_calibration:main"
+
+[tool.setuptools]
+packages = ["camera_calibration", "camera_calibration.nodes"]
