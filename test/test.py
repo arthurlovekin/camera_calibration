@@ -1,48 +1,31 @@
 import cv2
 import argparse
-import numpy as np
-from enum import Enum
-from camera_calibration.calibrator import Calibrator
-
-
-class CalibrationMode(Enum):
-    INTRINSIC = 'intrinsic'
-    EXTRINSIC = 'extrinsic'
-
-
-class CameraType(Enum):
-    MONOCULAR = 'mono'
-    STEREO = 'stereo'
-
-
-class TargetType(Enum):
-    CHESSBOARD = 'chessboard'
-    ACIRCLES = 'acircles'
-
+from camera_calibration.calibrator import IntrinsicCalibrator, StereoCalibrator, HandEyeCalibrator
+from camera_calibration.enums import CalibrationMode, PatternType, CameraModel
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Camera Calibration Tool')
     
     # Calibration mode
-    parser.add_argument('--mode', type=str, choices=[e.value for e in CalibrationMode], 
+    parser.add_argument('--calibration-mode', type=str, choices=[e.value for e in CalibrationMode], 
                         default=CalibrationMode.INTRINSIC.value,
-                        help='Calibration mode: intrinsic or extrinsic')
+                        help=f'Calibration mode: {", ".join([e.value for e in CalibrationMode])}')
     
     # Camera type
-    parser.add_argument('--camera', type=str, choices=[e.value for e in CameraType],
-                        default=CameraType.MONOCULAR.value,
-                        help='Camera type: mono or stereo')
+    parser.add_argument('--camera-model', type=str, choices=[e.value for e in CameraModel],
+                        default=CameraModel.PINHOLE.value,
+                        help=f'Camera model: {", ".join([e.value for e in CameraModel])}')
     
     # Pattern type and properties
-    parser.add_argument('--pattern', type=str, choices=[e.value for e in TargetType],
-                        default=TargetType.CHESSBOARD.value,
-                        help='Calibration pattern type: chessboard or acircles')
+    parser.add_argument('--pattern', type=str, choices=[e.value for e in PatternType],
+                        default=PatternType.CHESSBOARD.value,
+                        help=f'Calibration pattern type: {", ".join([e.value for e in PatternType])}')
     parser.add_argument('--rows', type=int, default=6,
                         help='Number of rows in the pattern')
     parser.add_argument('--columns', type=int, default=8,
                         help='Number of columns in the pattern')
     parser.add_argument('--square-size-mm', type=float, default=10,
-                        help='Square size in millimeters for chessboard pattern')
+                        help='Square size of the pattern in millimeters (this means different things for different patterns; see gen_pattern.py)')
     
     # Additional options
     parser.add_argument('--approximate', type=float, default=0.0,
@@ -56,6 +39,14 @@ def parse_arguments():
     
     return parser.parse_args()
 
+def initialize_calibrator(args):
+    if args.calibration_mode == CalibrationMode.INTRINSIC.value:
+        calibrator = Calibrator(args)
+    elif args.calibration_mode == CalibrationMode.STEREO.value:
+        calibrator = StereoCalibrator(args)
+    elif args.calibration_mode == CalibrationMode.HAND_EYE.value:
+        calibrator = HandEyeCalibrator(args)
+    return calibrator
 
 def main():
     print(f"You are using OpenCV version {cv2.__version__}")

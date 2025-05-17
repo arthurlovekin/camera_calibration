@@ -64,7 +64,7 @@ class Calibrator(ABC):
         pass
 
 
-class MonoCalibrator(Calibrator):
+class IntrinsicCalibrator(Calibrator):
 
     def maybe_add_sample(self, sample: MonoSample):
         """
@@ -140,8 +140,8 @@ class MonoCalibrator(Calibrator):
 class StereoCalibrator(Calibrator):
     def __init__(self):
         super().__init__()
-        self.left_calibrator = MonoCalibrator()
-        self.right_calibrator = MonoCalibrator()
+        self.left_calibrator = IntrinsicCalibrator()
+        self.right_calibrator = IntrinsicCalibrator()
     
     def maybe_add_sample(self, sample: StereoSample):
         """
@@ -197,7 +197,7 @@ class StereoCalibrator(Calibrator):
 class HandEyeCalibrator(Calibrator):
     def __init__(self):
         super().__init__()
-        self.mono_calibrator = MonoCalibrator()
+        self.intrinsic_calibrator = IntrinsicCalibrator()
     
     def maybe_add_sample(self, sample: HandEyeSample):
         """
@@ -206,7 +206,7 @@ class HandEyeCalibrator(Calibrator):
         pass
     
     def distribution_is_good(self):
-        return self.mono_calibrator.distribution_is_good()
+        return self.intrinsic_calibrator.distribution_is_good()
     
     def calibrate(self, force=False):
         """
@@ -220,7 +220,7 @@ class HandEyeCalibrator(Calibrator):
         
         print("Calibrating...")
         # First perform the intrinsic calibration 
-        K, dist_coeffs, rvecs, tvecs = self.mono_calibrator.calibrate()
+        K, dist_coeffs, rvecs, tvecs = self.intrinsic_calibrator.calibrate()
 
         # Then perform the hand-eye calibration
         ret, rvec, tvec = cv2.calibrateHandEye(
