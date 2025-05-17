@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 from abc import ABC, abstractmethod
-from lense import Lense
-from sample import MonoSample, StereoSample, HandEyeSample
+from camera_calibration.intrinsic_parameters import IntrinsicParameters
+from camera_calibration.sample import MonoSample, StereoSample, HandEyeSample
 
 class Calibrator(ABC):
     """

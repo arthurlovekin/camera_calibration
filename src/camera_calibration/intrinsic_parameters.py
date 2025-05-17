@@ -7,7 +7,7 @@ class CameraModel(Enum):
     FISHEYE = "fisheye"
 
 @dataclass
-class Lense:
+class IntrinsicParameters:
     """
     Each lense has intrinsic parameters, which describe the geometry of the lense:
     focal length, principal point, and distortion coefficients. This also provides 
