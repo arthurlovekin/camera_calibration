@@ -1,10 +1,6 @@
-from enum import Enum
 from dataclasses import dataclass
 import numpy as np
-
-class CameraModel(Enum):
-    PINHOLE = "pinhole"
-    FISHEYE = "fisheye"
+from camera_calibration.enums import CameraModel
 
 @dataclass
 class IntrinsicParameters:
