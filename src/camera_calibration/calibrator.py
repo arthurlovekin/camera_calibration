@@ -3,6 +3,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 from camera_calibration.intrinsic_parameters import IntrinsicParameters
 from camera_calibration.sample import MonoSample, StereoSample, HandEyeSample
+from camera_calibration.enums import CameraModel
 
 class Calibrator(ABC):
     """
@@ -11,7 +12,8 @@ class Calibrator(ABC):
     running the calibration itself, 
     and saving the samples and calibration output to a file.
     """
-    def __init__(self):
+    def __init__(self, camera_model: CameraModel):
+        self.camera_model = camera_model
         self.samples = []
         self.n_points = 0
 
@@ -135,13 +137,23 @@ class IntrinsicCalibrator(Calibrator):
             cameraMatrix=self.camera.camera_matrix,
             distCoeffs=self.camera.dist_coeffs,
         )
+
+        return IntrinsicParameters(
+            camera_matrix=camera_matrix,
+            dist_coeffs=dist_coeffs,
+            rvecs=rvecs,
+            tvecs=tvecs,
+        )
         
 
 class StereoCalibrator(Calibrator):
-    def __init__(self):
-        super().__init__()
-        self.left_calibrator = IntrinsicCalibrator()
-        self.right_calibrator = IntrinsicCalibrator()
+    def __init__(self, l_camera_model: CameraModel, r_camera_model: CameraModel = None):
+        super().__init__(l_camera_model)
+        if r_camera_model is None:
+            r_camera_model = l_camera_model
+        self.right_camera_model = r_camera_model
+        self.left_calibrator = IntrinsicCalibrator(l_camera_model)
+        self.right_calibrator = IntrinsicCalibrator(r_camera_model)
     
     def maybe_add_sample(self, sample: StereoSample):
         """
@@ -195,9 +207,9 @@ class StereoCalibrator(Calibrator):
         
 
 class HandEyeCalibrator(Calibrator):
-    def __init__(self):
+    def __init__(self, camera_model: CameraModel):
         super().__init__()
-        self.intrinsic_calibrator = IntrinsicCalibrator()
+        self.intrinsic_calibrator = IntrinsicCalibrator(camera_model)
     
     def maybe_add_sample(self, sample: HandEyeSample):
         """
