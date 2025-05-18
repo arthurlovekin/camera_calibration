@@ -13,6 +13,8 @@ class Calibrator(ABC):
     and saving the samples and calibration output to a file.
     """
     def __init__(self, camera_model: CameraModel):
+        self.auto_collect = True
+
         self.camera_model = camera_model
         self.samples = []
         self.n_points = 0
@@ -59,20 +61,49 @@ class Calibrator(ABC):
         pass
 
     @abstractmethod
-    def save_calibration_results(self, file_path):
+    def remove_most_recent_sample(self):
         """
-        Saves the calibration results to a folder.
+        Removes the most recent sample from the calibrator.
         """
         pass
 
+    @abstractmethod
+    def save(self, file_path):
+        """
+        Saves raw data and calibration results (if available) to a folder.
+        """
+        pass
+
+    @abstractmethod
+    def save_raw_data(self, file_path):
+        """
+        Saves raw data (images, annotated images, poses, etc.)to a folder.
+        """
+        pass
+
+    def toggle_auto_collect(self):
+        self.auto_collect = not self.auto_collect
+        print(f"Auto-collect is now {'on' if self.auto_collect else 'off'}")
+
+    def collect_sample(self):
+        if self.auto_collect:
+            self.maybe_add_sample(self.sample)
+
+    def close(self):
+        self.save()
+        # TODO: how does this propagate back to the CLI?
+
 
 class IntrinsicCalibrator(Calibrator):
+    def __init__(self, camera_model: CameraModel):
+        super().__init__(camera_model)
+        self.gui = None
 
     def maybe_add_sample(self, sample: MonoSample):
         """
         Adds a sample to the calibrator if it improves the distribution of the samples.
         """
-        pass
+        self.gui.show(sample)
 
     def distribution_is_good(self):
         if self.n_points < self.min_n_points:

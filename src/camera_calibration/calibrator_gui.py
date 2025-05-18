@@ -20,10 +20,11 @@ class CalibratorGUI(ABC):
         elif key == ord('a'):
             self.calibrator.toggle_auto_collect()
         elif key == ord('c'):
-            # TODO: decide to force calibration or not
             self.calibrator.calibrate()
+        elif key == ord('f'):
+            self.calibrator.calibrate(force=True)
         elif key == ord('s'):
-            self.calibrator.save_data()
+            self.calibrator.save()
         elif key == ord('r'):
             self.calibrator.remove_most_recent_sample()
         elif key == ord(' '):
@@ -38,6 +39,7 @@ class CalibratorGUI(ABC):
         print("""
               [a] toggle auto-collect
               [c] calibrate and save the data and results
+              [f] force calibration and save the data and results
               [q] or [esc] save data then quit
               [r] remove most recent sample
               [s] save raw data (and results if available)
