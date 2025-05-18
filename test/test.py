@@ -1,17 +1,18 @@
 import cv2
-from camera_calibration.cli import parse_arguments, create_calibrator
+from camera_calibration.cli import create_calibrator
+from camera_calibration.sample import MonoSample
 
 def main():
     print(f"You are using OpenCV version {cv2.__version__}")
+    calibrator = create_calibrator()
     cap = cv2.VideoCapture(0)
-    args = parse_arguments()
-    calibrator = create_calibrator(args)
-
     while True:
         ret, frame = cap.read()
-        cv2.imshow("frame", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if not ret:
             break
+        sample = MonoSample(frame)
+        calibrator.maybe_add_sample(sample)
+
     cap.release()
     cv2.destroyAllWindows()
 
