@@ -1,0 +1,11 @@
+TODO: 
+1. Calibrate from file 
+2. Intrinsic calibration using GUI
+    Add buttons using opencv camera callbacks 
+    (I explored using async Python to take commands from the terminal, 
+    but it's too complicated for my taste compared to using the opencv mouse callback
+    to get the interactivity. Unfortunately OpenCV doesn't provide keypress callbacks, 
+    only the WaitKey)
+    GUI needs major improvements
+3. Stereo calibration
+4. Extrinsic Calibration
