@@ -43,7 +43,7 @@ The corner detection algorithms will always try to detect interior corners (poin
 
 Example:
 ```
-python pattern/gen_pattern.py -o radon_checkerboard.svg --rows 10 --columns 15 --type radon_checkerboard -s 12.1 -m 7 4 7 5 8 5
+python pattern/gen_pattern.py -o radon_checkerboard.svg --rows 9 --columns 12 --type radon_checkerboard -s 19.0 -m 5 3 5 4 6 4
 ```
 Use Inkscape or Adobe Illustrator to open the SVG file, add text description, and convert to PNG to print.
 
